@@ -3,7 +3,7 @@ from fractions import Fraction
 from itertools import combinations
 
 from spectral.dictionary.operators import DictionaryOperator
-from spectral.unmixing.linear import dot, solve_affine
+from spectral.unmixing.linear import dot, minimum_norm_solution
 
 
 @dataclass(frozen=True)
@@ -13,10 +13,6 @@ class FaceCandidate:
     reconstruction: tuple
     residual_squared: Fraction
     norm_squared: Fraction
-
-
-class _DependentFace(ValueError):
-    pass
 
 
 def solve_face(matrix, values, support):
@@ -29,10 +25,12 @@ def solve_face(matrix, values, support):
     columns = [tuple(row[j] for row in selected) for j in range(k)]
     gram = [[dot(left, right) for right in columns] for left in columns]
     target = [dot(column, values) for column in columns]
-    space = solve_affine(gram, target, k)
-    if space.nullspace:
-        raise _DependentFace("face has no unique coordinates")
-    local = space.particular
+    # Solutions of the Gram normal equations are exactly the least-squares
+    # minimizers on this face. Taking the minimum-norm solution keeps the face
+    # admissible when its columns are linearly dependent (zero, repeated or
+    # proportional columns); the canonical tie-break is completed globally by
+    # solve_canonical over every face.
+    local = minimum_norm_solution(gram, target, k)
     coefficients = [Fraction() for j in range(operator.n)]
     for position, value in zip(support, local):
         coefficients[position] = value
@@ -46,8 +44,4 @@ def enumerate_face_candidates(matrix, values):
     operator = DictionaryOperator(matrix)
     for size in range(operator.n + 1):
         for support in combinations(range(operator.n), size):
-            try:
-                candidate = solve_face(operator.matrix, values, support)
-            except _DependentFace:
-                continue
-            yield candidate
+            yield solve_face(operator.matrix, values, support)
