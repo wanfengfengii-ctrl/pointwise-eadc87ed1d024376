@@ -1,0 +1,10 @@
+{
+  "channels": ["violet", "red"],
+  "components": ["dye-a", "dye-b", "tracer"],
+  "channel_units": ["absorbance", "absorbance"],
+  "component_units": ["mg/L", "mg/L", "mg/L"],
+  "matrix": [[1, 1, 0], [0, 0, 1]],
+  "records": [{"sample_id": "river-07", "values": [1, 0]}],
+  "positive": [0, 1],
+  "negative": [0, -1]
+}

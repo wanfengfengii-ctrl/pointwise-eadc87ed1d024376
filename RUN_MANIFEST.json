@@ -1,0 +1,12 @@
+{
+  "python": "3.11",
+  "verify": ["python3", "-B", "verify.py"],
+  "demo": ["python3", "-B", "demo.py"],
+  "checks": [
+    ["python3", "-B", "-m", "unittest", "discover", "-s", "tests", "-t", "."],
+    ["python3", "-B", "-m", "unittest", "tests.test_unmix.TestUnmix.test_unique_solution", "tests.test_lifecycle.TestLifecycle.test_channel_mismatch"],
+    ["python3", "-B", "-m", "unittest", "tests.test_unmix.TestUnmix.test_rank_deficient_canonical", "tests.test_archive.TestArchive.test_publish_failure_retry"],
+    ["python3", "-B", "-m", "unittest", "tests.test_response.TestResponse.test_boundary_directions", "tests.test_response.TestResponse.test_invalid_parent_and_direction"],
+    ["python3", "-B", "-m", "unittest", "tests.test_lifecycle.TestLifecycle.test_correction_reopen", "tests.test_archive.TestArchive.test_export_failure_preserves_results"]
+  ]
+}
